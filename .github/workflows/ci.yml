@@ -15,18 +15,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Configurando la versión de NET
-        uses: actions/setup-dotnet@v4
-        with:
-          java-version: ${{ env.DOTNET_VERSION }}
+      
+      # Corregido: setup-java solo para Java
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
+          
+      # Corregido: setup-dotnet usa dotnet-version (y borré el duplicado)
       - name: Configurando la versión de NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+          
       - name: Restaurar los paquetes
         run: dotnet restore 
       - name: Ejecutar pruebas
@@ -42,7 +43,7 @@ jobs:
         with:
           name: CoverageReport 
           path: coveragereport 
-      - name: Publish coverage in build summary # 
+      - name: Publish coverage in build summary 
         run: cat coveragereport/SummaryGithub.md >> $GITHUB_STEP_SUMMARY 
         shell: bash
       - name: Instalar Scanner
@@ -56,12 +57,12 @@ jobs:
         run: dotnet tool install -g SpecFlow.Plus.LivingDoc.CLI
       - name: Generate living doc
         run: livingdoc test-assembly ./Bank.Domain.Tests/bin/Debug/net8.0/Bank.Domain.Tests.dll -t ./Bank.Domain.Tests/bin/Debug/net8.0/TestExecution.json -o ./report/index.html
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: specflow
           path: report
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v3  # Recomendado v3 para este lab, aunque v4 funciona
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: bddreporte
