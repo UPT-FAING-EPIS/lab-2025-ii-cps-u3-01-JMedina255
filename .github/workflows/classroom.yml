@@ -22,6 +22,7 @@ jobs:
         command: cd .github/workflows && cat ci.yml | grep GITHUB_TOKEN
         timeout: 10
         max-score: 5
+        fetch-depth: 0
     - name: T2
       id: t2
       uses: classroom-resources/autograding-command-grader@v1
